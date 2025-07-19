@@ -78,7 +78,9 @@ def main():
         if isEnd(carac) or carac_unico_especial:
             # tentar classificar o buffer antes de limpar
             if buffer:
-                if isClass(buffer):
+                if buffer == "FUNC":
+                    add(buffer, "FUNC")
+                elif isClass(buffer):
                     add(buffer, "CLASSE")
                 elif isIdent(buffer):
                     add(buffer, "IDENT")  
