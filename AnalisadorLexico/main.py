@@ -1,12 +1,14 @@
 # definicoes
 TOKENS = [
-    "FUNC", "INT", "REAL", "STRING", "LISTA", "SE", "PODESER", 
+    "FUNC", "INT", "REAL", "STRING", "LISTA", "MATRIZ", "SE", "PODESER", 
     "SENAO", "PARA", "ENQUANTO", "RETORNO", "JUROU", "CERTIN", "CONST",
     "OP_LOGICO", "OP_NUMERICO", "OP_RELACIONAL",
-    "IDENT", "DEL", "STRING_VAL", "LISTA_VAL", "INT_VAL", "REAL_VAL", "CLASSE"
+    "IDENT", "DEL", "STRING_VAL", "COLECAO_VAL", "INT_VAL", "REAL_VAL", "CLASSE"
 ]
 
-delimitadores = [",", ";", "(", ")", "{", "}"]
+# Já feitos: STRING_VAL, REAL_VAL, DEL, CLASSE, IDENT, OP_LOGICO, OP_NUMERICO, OP_RELACIONAL
+
+delimitadores = [",", ";", "(", ")", "{", "}", '[', ']']
 operadores_logic = ["&", "|", "!"]
 operadores_aritm = ["+", "-", "*", "/", "%"]
 operadores_relac = ["=", ">", "<"]
@@ -15,6 +17,19 @@ operadores_relac = ["=", ">", "<"]
 resultado = []
 
 # regras de cada token
+def isString(buffer):
+    possibilidade1 = buffer.count('"') % 2 == 0 and buffer[0] == '"' and buffer[len(buffer)-1] == '"' 
+    possibilidade2 = buffer.count("'") % 2 == 0 and buffer[0] == "'" and buffer[len(buffer)-1] == "'" 
+
+    if possibilidade1:
+        if buffer[1:].index('"')+1 < len(buffer)-1:
+            possibilidade1 = False
+    if possibilidade2:
+        if buffer[1:].index("'")+1 < len(buffer)-1:
+            possibilidade2 = False
+
+    return possibilidade1 or possibilidade2 
+
 def isIdent(buffer):
     if ((buffer[0].isalpha() and buffer[0] == buffer[0].lower()) or buffer[0] == '@') and len(buffer) <= 12:
         for carac in buffer[1:]:
@@ -70,12 +85,17 @@ def display():
 #############################################
 
 def main():
-    codigo = "/Classe_01() {1.0 + 10.2;}"
+    codigo = "/Classe_01() {1.0 + 10.2 - 'tes''te,;'}"
     buffer = ""
 
+    string_current = False
     for i, carac in enumerate(codigo):
         carac_unico_especial = carac in delimitadores or carac in operadores_logic or carac in operadores_relac or carac in operadores_aritm
-        if isEnd(carac) or carac_unico_especial:
+        if carac == "'":
+            string_current = not string_current
+
+        if isEnd(carac) or (carac_unico_especial and not string_current):
+            print(buffer)
             # tentar classificar o buffer antes de limpar
             if buffer:
                 if buffer == "func":
@@ -86,10 +106,13 @@ def main():
                     add(buffer, "IDENT")  
                 elif isFloat(buffer):
                     add(buffer, "REAL")
+                elif isString(buffer):
+                    add(buffer, "STRING")
                 else:
-                    add("Erro", "ERRO")
+                    add(buffer, "ERRO")
 
                 # sempre ira limpar
+                string_current = False
                 buffer = ""
 
             # tratando quando é só um caractere
@@ -111,6 +134,8 @@ def main():
             add(buffer, "CLASSE")
         elif isIdent(buffer):
             add(buffer, "IDENT")  # token padrão 
+        else:
+            add(buffer, "ERRO")
 
     display()
 
