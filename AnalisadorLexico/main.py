@@ -92,7 +92,7 @@ def main(nome_arquivo):
     for linha in codigo:
         for carac in linha:
             carac_unico_especial = carac in delimitadores or carac in operadores_logic or carac in operadores_relac or carac in operadores_aritm
-            if carac == "'":
+            if carac == "'" or carac == '"':
                 string_current = not string_current
             if isEnd(carac) or (carac_unico_especial and not string_current):
                 # tentar classificar o buffer antes de limpar
