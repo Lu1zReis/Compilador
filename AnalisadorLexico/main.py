@@ -46,8 +46,18 @@ def isFloat(buffer):
 def isInt(buffer): #L: adicionei a função de num inteiros
     return buffer.isdigit()
 
-def isString(buffer):  #L: adicionei a função para reconhecer strings '>exemplo<'
-    return buffer.startswith('>') and buffer.endswith('<')
+def isString(buffer):
+    possibilidade1 = buffer.count('"') % 2 == 0 and buffer[0] == '"' and buffer[len(buffer)-1] == '"' 
+    possibilidade2 = buffer.count("'") % 2 == 0 and buffer[0] == "'" and buffer[len(buffer)-1] == "'" 
+
+    if possibilidade1:
+        if buffer[1:].index('"')+1 < len(buffer)-1:
+            possibilidade1 = False
+    if possibilidade2:
+        if buffer[1:].index("'")+1 < len(buffer)-1:
+            possibilidade2 = False
+
+    return possibilidade1 or possibilidade2 
 
 def isDelim(buffer):
     return buffer in delimitadores
@@ -90,9 +100,7 @@ def main(nome_arquivo):
             if isEnd(carac) or (carac_unico_especial and not string_current):
                 # tentar classificar o buffer antes de limpar
                 if buffer:
-                    if buffer == "func":
-                        add(buffer, "FUNC")
-                    elif isClass(buffer):
+                    if isClass(buffer):
                         add(buffer, "CLASSE")
                     elif isIdent(buffer):
                         add(buffer, "IDENT")  
@@ -110,18 +118,18 @@ def main(nome_arquivo):
                 # sempre ira limpar
                 buffer = ""
 
-            # tratando quando é só um caractere
-            if isDelim(carac):
-                add(carac, "DEL")
-            elif isOpLogic(carac):
-                add(carac, "OP_LOGIC")
-            elif isOpRelac(carac):
-                add(carac, "OP_RELAC")
-            elif isOpAritm(carac):
-                add(carac, "OP_ARITM")
+                # tratando quando é só um caractere
+                if isDelim(carac):
+                    add(carac, "DEL")
+                elif isOpLogic(carac):
+                    add(carac, "OP_LOGIC")
+                elif isOpRelac(carac):
+                    add(carac, "OP_RELAC")
+                elif isOpAritm(carac):
+                    add(carac, "OP_ARITM")
                 
-        else:
-            buffer += carac
+            else:
+                buffer += carac
 
     # se restar algo
     if buffer:
@@ -134,4 +142,4 @@ def main(nome_arquivo):
 
     display()
 
-main()
+main("AnalisadorLexico/exemplo.txt")
