@@ -49,33 +49,30 @@ def isString(buffer):
 
     return possibilidade1 or possibilidade2 
 
+def isFunc(buffer):
+    if not (buffer.startswith('#')):
+        return False
+    nome = buffer[1:]
+    return (1 <= len(nome) <= 24 
+            and nome[0].isalpha() 
+            and all(c.isalnum() or c == '_' for c in nome[1:]))
+
 def isIdent(buffer):
-    if ((buffer[0].isalpha() and buffer[0] == buffer[0].lower()) or buffer[0] == '@') and len(buffer) <= 12:
-        for carac in buffer[1:]:
-            if carac.isalpha() or carac.isdigit() or carac == '_':
-                pass
-            else:
-                return False    
-        return True
+    if buffer[0].isalpha() and buffer[0] == buffer[0].lower() and len(buffer) <= 12:
+        return all(c.isalpha() or c.isdigit() or c == '_' for c in buffer[1:])
+    return False
 
 def isClass(buffer):
     size = len(buffer)
     return size > 1 and size <= 24 and buffer[0] == buffer[0].upper() and buffer[0].isalpha()
 
 def isFloat(buffer):
-    # "10.2"
-    tevePontuacao = False
-    for digit in buffer:
-        if not digit.isdigit() and digit != '.':
-            return False
-        elif digit == '.':
-            tevePontuacao = True
-    
-    if tevePontuacao:
-        return True
+    if buffer.count('.') == 1:
+        parte1, parte2 = buffer.split('.')
+        return parte1.isdigit() and parte2.isdigit()
     return False
 
-def isInt(buffer): #L: adicionei a função de num inteiros
+def isInt(buffer): 
     return buffer.isdigit()
 
 def isString(buffer):
@@ -136,6 +133,31 @@ def processaComentario(carac, buffer, comentario_current):
         return buffer, comentario_current  # segue normal
 
 
+def verifyToken(buffer):
+    if isClass(buffer):
+        add(buffer, "CLASSE")
+    elif isIdent(buffer):
+        add(buffer, "IDENT")  
+    elif isFloat(buffer):
+        add(buffer, "REAL")
+    elif isInt(buffer):
+        add(buffer, "INT")
+    elif isString(buffer):
+        add(buffer, "STRING")
+    elif isFunc(buffer):
+        add(buffer, "FUNC")
+    else:
+        add(buffer, "ERRO")
+
+def verifyCarac(caract):
+    if isDelim(caract):
+        add(caract, "DEL")
+    elif isOpLogic(caract):
+        add(caract, "OP_LOGIC")
+    elif isOpRelac(caract):
+        add(caract, "OP_RELAC")
+    elif isOpAritm(caract):
+        add(caract, "OP_ARITM")
 
 #############################################
 
@@ -164,16 +186,7 @@ def main(nome_arquivo):
             if isEnd(carac) or (carac_unico_especial and not string_current):
                 # tentar classificar o buffer antes de limpar
                 if buffer:
-                    if isClass(buffer):
-                        add(buffer, "CLASSE")
-                    elif isIdent(buffer):
-                        add(buffer, "IDENT")  
-                    elif isFloat(buffer):
-                        add(buffer, "REAL")
-                    elif isString(buffer):
-                        add(buffer, "STRING")
-                    else:
-                        add(buffer, "ERRO")
+                    verifyToken(buffer)
 
                     # sempre ira limpar
                     string_current = False
@@ -183,30 +196,14 @@ def main(nome_arquivo):
                 buffer = ""
 
                 # tratando quando é só um caractere
-                if isDelim(carac):
-                    add(carac, "DEL")
-                elif isOpLogic(carac):
-                    add(carac, "OP_LOGIC")
-                elif isOpRelac(carac):
-                    add(carac, "OP_RELAC")
-                elif isOpAritm(carac):
-                    add(carac, "OP_ARITM")
+                verifyCarac(carac)
                 
             else:
                 buffer += carac
 
     # se restar algo
     if buffer:
-        if isPalavraReservada(buffer):
-            add(buffer, palavras_reservadas[buffer])
-        elif isClass(buffer):
-            add(buffer, "CLASSE")
-        elif isIdent(buffer):
-            add(buffer, "IDENT")  # token padrão 
-        else:
-            add(buffer, "ERRO")
-    if comentario_current:
-        add(buffer, "COMENTARIO")
+        verifyToken(buffer)
 
         
     display()
