@@ -109,8 +109,8 @@ def display():
 
 #############################################
 
-def main():
-    codigo = " func /Classe_01() $ comentário aqui $ certin {1.0 + 10.2 - para 'tes''te,;'}"
+def main(nome_arquivo):
+    codigo = open(nome_arquivo, "r")
     buffer = ""
     comentario_current = False 
     string_current = False
@@ -157,27 +157,27 @@ def main():
                     else:
                         add(buffer, "ERRO")
 
-                # sempre ira limpar
-                string_current = False
-                buffer = ""
+                    # sempre ira limpar
+                    string_current = False
+                    buffer = ""
 
-            # tratando quando é só um caractere
-            if isDelim(carac):
-                add(carac, "DEL")
-            elif isOpLogic(carac):
-                add(carac, "OP_LOGIC")
-            elif isOpRelac(carac):
-                add(carac, "OP_RELAC")
-            elif isOpAritm(carac):
-                add(carac, "OP_ARITM")
-                
-        else:
-            buffer += carac
+                # tratando quando é só um caractere
+                if isDelim(carac):
+                    add(carac, "DEL")
+                elif isOpLogic(carac):
+                    add(carac, "OP_LOGIC")
+                elif isOpRelac(carac):
+                    add(carac, "OP_RELAC")
+                elif isOpAritm(carac):
+                    add(carac, "OP_ARITM")
+                    
+            else:
+                buffer += carac
 
     # se restar algo
     if buffer:
         if isPalavraReservada(buffer):
-             add(buffer, palavras_reservadas[buffer])
+            add(buffer, palavras_reservadas[buffer])
         elif isClass(buffer):
             add(buffer, "CLASSE")
         elif isIdent(buffer):
