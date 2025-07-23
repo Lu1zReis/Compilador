@@ -1,0 +1,6 @@
+/Classe() {
+    "teste'
+    "teste'dentro'"
+    'teste'
+    'teste'"teste"
+}
