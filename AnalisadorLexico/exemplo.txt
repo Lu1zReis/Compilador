@@ -1,4 +1,6 @@
 /Classe() {
-    teste
-
+    "teste'
+    "teste'dentro'"
+    'teste'
+    'teste'"teste"
 }
