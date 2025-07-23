@@ -3,7 +3,7 @@ TOKENS = [
     "FUNC", "INT", "REAL", "STRING", "LISTA", "MATRIZ", "SE", "PODESER", 
     "SENAO", "PARA", "ENQUANTO", "RETORNO", "JUROU", "CERTIN", "CONST",
     "OP_LOGICO", "OP_NUMERICO", "OP_RELACIONAL",
-    "IDENT", "DEL", "STRING_VAL", "COLECAO_VAL", "INT_VAL", "REAL_VAL", "CLASSE"
+    "IDENT", "DEL", "STRING_VAL", "COLECAO_VAL", "INT_VAL", "REAL_VAL", "CLASSE", "COMENTARIO"
 ]
 
 # Já feitos: STRING_VAL, REAL_VAL, DEL, CLASSE, IDENT, OP_LOGICO, OP_NUMERICO, OP_RELACIONAL
@@ -12,6 +12,25 @@ delimitadores = [",", ";", "(", ")", "{", "}", '[', ']']
 operadores_logic = ["&", "|", "!"]
 operadores_aritm = ["+", "-", "*", "/", "%"]
 operadores_relac = ["=", ">", "<"]
+
+#dicionario para as palavras reservadas
+palavras_reservadas = {
+    "func": "FUNC",
+    "int": "INT",
+    "real": "REAL",
+    "string": "STRING",
+    "lista": "LISTA",
+    "matriz": "MATRIZ",
+    "se": "SE",
+    "podeser": "PODESER",
+    "senao": "SENAO",
+    "para": "PARA",
+    "enquanto": "ENQUANTO",
+    "retorno": "RETORNO",
+    "jurou": "JUROU",
+    "certin": "CERTIN",
+    "const": "CONST"
+}
 
 # variavel global
 resultado = []
@@ -68,6 +87,13 @@ def isOpRelac(buffer):
 def isOpAritm(buffer):
     return buffer in operadores_aritm
 
+def isComentario(buffer):
+    return buffer.startswith('$') and buffer.endswith('$') and len(buffer) >= 2
+
+def isPalavraReservada(buffer):
+    return buffer in palavras_reservadas
+
+
 #############################################
 
 # funcoes auxiliares
@@ -85,21 +111,43 @@ def display():
 #############################################
 
 def main():
-    codigo = "/Classe_01() {1.0 + 10.2 - 'tes''te,;'}"
+    codigo = " func /Classe_01() $ comentário aqui $ certin {1.0 + 10.2 - para 'tes''te,;'}"
     buffer = ""
 
     string_current = False
+    comentario_current = False 
+
     for i, carac in enumerate(codigo):
         carac_unico_especial = carac in delimitadores or carac in operadores_logic or carac in operadores_relac or carac in operadores_aritm
         if carac == "'":
             string_current = not string_current
 
+        if carac == '$':
+            if not comentario_current:
+                comentario_current = True
+                buffer = '$'
+                continue
+            else:
+                buffer += '$'
+                comentario_current = False
+                if isComentario(buffer):
+                    add(buffer, "COMENTARIO")
+                else:
+                    print(f"Erro léxico: comentário malformado -> {buffer}")
+                    add(buffer, "ERRO")
+                buffer = ""
+                continue
+
+        if comentario_current:
+            buffer += carac
+            continue
+
         if isEnd(carac) or (carac_unico_especial and not string_current):
             print(buffer)
             # tentar classificar o buffer antes de limpar
             if buffer:
-                if buffer == "func":
-                    add(buffer, "FUNC")
+                if isPalavraReservada(buffer):
+                     add(buffer, palavras_reservadas[buffer])
                 elif isClass(buffer):
                     add(buffer, "CLASSE")
                 elif isIdent(buffer):
@@ -130,12 +178,21 @@ def main():
 
     # se restar algo
     if buffer:
-        if isClass(buffer):
+        if isPalavraReservada(buffer):
+             add(buffer, palavras_reservadas[buffer])
+        elif isClass(buffer):
             add(buffer, "CLASSE")
         elif isIdent(buffer):
             add(buffer, "IDENT")  # token padrão 
+        elif isComentario(buffer):
+            add(buffer, "COMENTARIO")
         else:
             add(buffer, "ERRO")
+
+
+    if comentario_current:
+        print("Erro léxico: comentário não fechado (faltando $ no final).")
+        add(buffer, "ERRO")
 
     display()
 
