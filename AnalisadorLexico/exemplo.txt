@@ -1,6 +1,1 @@
-/Classe() {
-    "teste'
-    "teste'dentro'"
-    'teste'
-    'teste'"teste"
-}
+#Funcioo_123()

@@ -17,33 +17,31 @@ operadores_relac = ["=", ">", "<"]
 resultado = []
 
 # regras de cada token
+
+def isFunc(buffer):
+    if not (buffer.startswith('#')):
+        return False
+    nome = buffer[1:]
+    return (1 <= len(nome) <= 24 
+            and nome[0].isalpha() 
+            and all(c.isalnum() or c == '_' for c in nome[1:]))
+
 def isIdent(buffer):
-    if ((buffer[0].isalpha() and buffer[0] == buffer[0].lower()) or buffer[0] == '@') and len(buffer) <= 12:
-        for carac in buffer[1:]:
-            if carac.isalpha() or carac.isdigit() or carac == '_':
-                pass
-            else:
-                return False    
-        return True
+    if buffer[0].isalpha() and buffer[0] == buffer[0].lower() and len(buffer) <= 12:
+        return all(c.isalpha() or c.isdigit() or c == '_' for c in buffer[1:])
+    return False
 
 def isClass(buffer):
     size = len(buffer)
     return size > 1 and size <= 24 and buffer[0] == buffer[0].upper() and buffer[0].isalpha()
 
 def isFloat(buffer):
-    # "10.2"
-    tevePontuacao = False
-    for digit in buffer:
-        if not digit.isdigit() and digit != '.':
-            return False
-        elif digit == '.':
-            tevePontuacao = True
-    
-    if tevePontuacao:
-        return True
+    if buffer.count('.') == 1:
+        parte1, parte2 = buffer.split('.')
+        return parte1.isdigit() and parte2.isdigit()
     return False
 
-def isInt(buffer): #L: adicionei a função de num inteiros
+def isInt(buffer): 
     return buffer.isdigit()
 
 def isString(buffer):
@@ -108,6 +106,8 @@ def main(nome_arquivo):
                         add(buffer, "REAL")
                     elif isString(buffer):
                         add(buffer, "STRING")
+                    elif isFunc(buffer):
+                        add(buffer, "FUNC")
                     else:
                         add(buffer, "ERRO")
 
