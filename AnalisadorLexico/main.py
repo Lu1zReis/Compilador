@@ -22,7 +22,9 @@ def isFunc(buffer):
     if not (buffer.startswith('#')):
         return False
     nome = buffer[1:]
-    return 1 <= len(nome) <= 24
+    return (1 <= len(nome) <= 24 
+            and nome[0].isalpha() 
+            and all(c.isalnum() or c == '_' for c in nome[1:]))
 
 def isIdent(buffer):
     if buffer[0].isalpha() and buffer[0] == buffer[0].lower() and len(buffer) <= 12:
