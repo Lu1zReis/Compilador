@@ -129,8 +129,6 @@ def main(nome_arquivo):
             add(buffer, "CLASSE")
         elif isIdent(buffer):
             add(buffer, "IDENT")  # token padrão 
-        elif isComentario(buffer):
-            add(buffer, "COMENTARIO")
         else:
             add(buffer, "ERRO")
 
