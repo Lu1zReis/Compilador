@@ -83,6 +83,32 @@ def display():
     for token, lexema in resultado:
         print(f"<{token}, {lexema}>")
 
+def verifyToken(buffer):
+    if isClass(buffer):
+        add(buffer, "CLASSE")
+    elif isIdent(buffer):
+        add(buffer, "IDENT")  
+    elif isFloat(buffer):
+        add(buffer, "REAL")
+    elif isInt(buffer):
+        add(buffer, "INT")
+    elif isString(buffer):
+        add(buffer, "STRING")
+    elif isFunc(buffer):
+        add(buffer, "FUNC")
+    else:
+        add(buffer, "ERRO")
+
+def verifyCarac(caract):
+    if isDelim(caract):
+        add(caract, "DEL")
+    elif isOpLogic(caract):
+        add(caract, "OP_LOGIC")
+    elif isOpRelac(caract):
+        add(caract, "OP_RELAC")
+    elif isOpAritm(caract):
+        add(caract, "OP_ARITM")
+
 #############################################
 
 def main(nome_arquivo):
@@ -98,20 +124,7 @@ def main(nome_arquivo):
             if isEnd(carac) or (carac_unico_especial and not string_current):
                 # tentar classificar o buffer antes de limpar
                 if buffer:
-                    if isClass(buffer):
-                        add(buffer, "CLASSE")
-                    elif isIdent(buffer):
-                        add(buffer, "IDENT")  
-                    elif isFloat(buffer):
-                        add(buffer, "REAL")
-                    elif isInt(buffer):
-                        add(buffer, "INT")
-                    elif isString(buffer):
-                        add(buffer, "STRING")
-                    elif isFunc(buffer):
-                        add(buffer, "FUNC")
-                    else:
-                        add(buffer, "ERRO")
+                    verifyToken(buffer)
 
                     # sempre ira limpar
                     string_current = False
@@ -121,26 +134,14 @@ def main(nome_arquivo):
                 buffer = ""
 
                 # tratando quando é só um caractere
-                if isDelim(carac):
-                    add(carac, "DEL")
-                elif isOpLogic(carac):
-                    add(carac, "OP_LOGIC")
-                elif isOpRelac(carac):
-                    add(carac, "OP_RELAC")
-                elif isOpAritm(carac):
-                    add(carac, "OP_ARITM")
+                verifyCarac(carac)
                 
             else:
                 buffer += carac
 
     # se restar algo
     if buffer:
-        if isClass(buffer):
-            add(buffer, "CLASSE")
-        elif isIdent(buffer):
-            add(buffer, "IDENT")  # token padrão 
-        else:
-            add(buffer, "ERRO")
+        verifyToken(buffer)
 
     display()
 
