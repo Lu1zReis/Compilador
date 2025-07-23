@@ -13,37 +13,16 @@ operadores_logic = ["&", "|", "!"]
 operadores_aritm = ["+", "-", "*", "/", "%"]
 operadores_relac = ["=", ">", "<"]
 
-# dicionario para as palavras reservadas
-palavras_reservadas = {
-    "func": "FUNC",
-    "int": "INT",
-    "real": "REAL",
-    "string": "STRING",
-    "lista": "LISTA",
-    "matriz": "MATRIZ",
-    "se": "SE",
-    "podeser": "PODESER",
-    "senao": "SENAO",
-    "para": "PARA",
-    "enquanto": "ENQUANTO",
-    "retorno": "RETORNO",
-    "jurou": "JUROU",
-    "certin": "CERTIN",
-    "const": "CONST"
-}
-
 # variavel global
 resultado = []
 
 # regras de cada token
-def isString(buffer):
-    return (buffer.startswith('"') and buffer.endswith('"')) or (buffer.startswith("'") and buffer.endswith("'"))
 
 def isFunc(buffer):
-    if not (buffer.startswith('#') and buffer.endswith('()')):
+    if not (buffer.startswith('#')):
         return False
-    nome = buffer[1:-2]
-    return 1 <= len(nome) <= 24 and all(c.isalnum())
+    nome = buffer[1:]
+    return 1 <= len(nome) <= 24
 
 def isIdent(buffer):
     if buffer[0].isalpha() and buffer[0] == buffer[0].lower() and len(buffer) <= 12:
@@ -63,8 +42,18 @@ def isFloat(buffer):
 def isInt(buffer): 
     return buffer.isdigit()
 
-def isString(buffer):  
-    return buffer.startswith('>') and buffer.endswith('<')
+def isString(buffer):
+    possibilidade1 = buffer.count('"') % 2 == 0 and buffer[0] == '"' and buffer[len(buffer)-1] == '"' 
+    possibilidade2 = buffer.count("'") % 2 == 0 and buffer[0] == "'" and buffer[len(buffer)-1] == "'" 
+
+    if possibilidade1:
+        if buffer[1:].index('"')+1 < len(buffer)-1:
+            possibilidade1 = False
+    if possibilidade2:
+        if buffer[1:].index("'")+1 < len(buffer)-1:
+            possibilidade2 = False
+
+    return possibilidade1 or possibilidade2 
 
 def isDelim(buffer):
     return buffer in delimitadores
@@ -107,9 +96,7 @@ def main(nome_arquivo):
             if isEnd(carac) or (carac_unico_especial and not string_current):
                 # tentar classificar o buffer antes de limpar
                 if buffer:
-                    if buffer == "func":
-                        add(buffer, "FUNC")
-                    elif isClass(buffer):
+                    if isClass(buffer):
                         add(buffer, "CLASSE")
                     elif isIdent(buffer):
                         add(buffer, "IDENT")  
@@ -129,18 +116,18 @@ def main(nome_arquivo):
                 # sempre ira limpar
                 buffer = ""
 
-            # tratando quando é só um caractere
-            if isDelim(carac):
-                add(carac, "DEL")
-            elif isOpLogic(carac):
-                add(carac, "OP_LOGIC")
-            elif isOpRelac(carac):
-                add(carac, "OP_RELAC")
-            elif isOpAritm(carac):
-                add(carac, "OP_ARITM")
+                # tratando quando é só um caractere
+                if isDelim(carac):
+                    add(carac, "DEL")
+                elif isOpLogic(carac):
+                    add(carac, "OP_LOGIC")
+                elif isOpRelac(carac):
+                    add(carac, "OP_RELAC")
+                elif isOpAritm(carac):
+                    add(carac, "OP_ARITM")
                 
-        else:
-            buffer += carac
+            else:
+                buffer += carac
 
     # se restar algo
     if buffer:
@@ -153,4 +140,4 @@ def main(nome_arquivo):
 
     display()
 
-main("exemplo.txt")
+main("AnalisadorLexico/exemplo.txt")
