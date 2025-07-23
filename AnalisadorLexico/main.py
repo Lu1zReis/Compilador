@@ -84,49 +84,48 @@ def display():
 
 #############################################
 
-def main():
-    codigo = "/Classe_01() {1.0 + 10.2 - 'tes''te,;'}"
+def main(nome_arquivo):
+    codigo = open(nome_arquivo, "r")
     buffer = ""
 
     string_current = False
-    for i, carac in enumerate(codigo):
-        carac_unico_especial = carac in delimitadores or carac in operadores_logic or carac in operadores_relac or carac in operadores_aritm
-        if carac == "'":
-            string_current = not string_current
+    for linha in codigo:
+        for carac in linha:
+            carac_unico_especial = carac in delimitadores or carac in operadores_logic or carac in operadores_relac or carac in operadores_aritm
+            if carac == "'":
+                string_current = not string_current
+            if isEnd(carac) or (carac_unico_especial and not string_current):
+                # tentar classificar o buffer antes de limpar
+                if buffer:
+                    if buffer == "func":
+                        add(buffer, "FUNC")
+                    elif isClass(buffer):
+                        add(buffer, "CLASSE")
+                    elif isIdent(buffer):
+                        add(buffer, "IDENT")  
+                    elif isFloat(buffer):
+                        add(buffer, "REAL")
+                    elif isString(buffer):
+                        add(buffer, "STRING")
+                    else:
+                        add(buffer, "ERRO")
 
-        if isEnd(carac) or (carac_unico_especial and not string_current):
-            print(buffer)
-            # tentar classificar o buffer antes de limpar
-            if buffer:
-                if buffer == "func":
-                    add(buffer, "FUNC")
-                elif isClass(buffer):
-                    add(buffer, "CLASSE")
-                elif isIdent(buffer):
-                    add(buffer, "IDENT")  
-                elif isFloat(buffer):
-                    add(buffer, "REAL")
-                elif isString(buffer):
-                    add(buffer, "STRING")
-                else:
-                    add(buffer, "ERRO")
+                    # sempre ira limpar
+                    string_current = False
+                    buffer = ""
 
-                # sempre ira limpar
-                string_current = False
-                buffer = ""
-
-            # tratando quando é só um caractere
-            if isDelim(carac):
-                add(carac, "DEL")
-            elif isOpLogic(carac):
-                add(carac, "OP_LOGIC")
-            elif isOpRelac(carac):
-                add(carac, "OP_RELAC")
-            elif isOpAritm(carac):
-                add(carac, "OP_ARITM")
-                
-        else:
-            buffer += carac
+                # tratando quando é só um caractere
+                if isDelim(carac):
+                    add(carac, "DEL")
+                elif isOpLogic(carac):
+                    add(carac, "OP_LOGIC")
+                elif isOpRelac(carac):
+                    add(carac, "OP_RELAC")
+                elif isOpAritm(carac):
+                    add(carac, "OP_ARITM")
+                    
+            else:
+                buffer += carac
 
     # se restar algo
     if buffer:
@@ -139,4 +138,4 @@ def main():
 
     display()
 
-main()
+main("exemplo.txt")
