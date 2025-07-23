@@ -1,11 +1,1 @@
 #minhaFuncao() 
-/ClasseExemplo {
-    int x = 10;
-    real y = 3.14;
-    string nome = "Letícia";
-    lista itens = ['a', 'b', 'c'];
-    $ Isso é um comentário $
-    se (x > 5) {
-        retorno 'ok';
-    }
-}

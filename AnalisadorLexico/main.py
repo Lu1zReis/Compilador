@@ -1,12 +1,12 @@
 # definicoes
 TOKENS = [
-    "FUNC", "INT", "REAL", "STRING", "SE", "PODESER", 
+    "FUNC", "INT", "REAL", "STRING", "LISTA", "SE", "PODESER", 
     "SENAO", "PARA", "ENQUANTO", "RETORNO", "JUROU", "CERTIN", "CONST",
     "OP_LOGICO", "OP_NUMERICO", "OP_RELACIONAL",
-    "IDENT", "DEL", "STRING_VAL", "COLECAO_VAL", "INT_VAL", "REAL_VAL", "CLASSE", "COMENTARIO"
+    "IDENT", "DEL", "STRING_VAL", "LISTA_VAL", "INT_VAL", "REAL_VAL", "CLASSE"
 ]
 
-# Já feitos: STRING_VAL, REAL_VAL, DEL, CLASSE, IDENT, OP_LOGICO, OP_NUMERICO, OP_RELACIONAL
+# palavras-chave
 
 delimitadores = [",", ";", "(", ")", "{", "}", '[', ']']
 operadores_logic = ["&", "|", "!"]
@@ -37,7 +37,6 @@ resultado = []
 
 # regras de cada token
 def isString(buffer):
-    # String deve começar e terminar com aspas simples ou duplas
     return (buffer.startswith('"') and buffer.endswith('"')) or (buffer.startswith("'") and buffer.endswith("'"))
 
 def isFunc(buffer):
@@ -61,8 +60,11 @@ def isFloat(buffer):
         return parte1.isdigit() and parte2.isdigit()
     return False
 
-def isInt(buffer):
+def isInt(buffer): 
     return buffer.isdigit()
+
+def isString(buffer):  
+    return buffer.startswith('>') and buffer.endswith('<')
 
 def isDelim(buffer):
     return buffer in delimitadores
@@ -75,12 +77,6 @@ def isOpRelac(buffer):
 
 def isOpAritm(buffer):
     return buffer in operadores_aritm
-
-def isComentario(buffer):
-    return buffer.startswith('$') and buffer.endswith('$') and len(buffer) >= 2
-
-def isPalavraReservada(buffer):
-    return buffer in palavras_reservadas
 
 #############################################
 
@@ -98,71 +94,39 @@ def display():
 
 #############################################
 
-def main():
-    
-
+def main(nome_arquivo):
+    codigo = open(nome_arquivo, "r")
     buffer = ""
 
     string_current = False
-    string_delim = ""  # Qual delimitador abriu a string (' ou ")
-    comentario_current = False 
+    for linha in codigo:
+        for carac in linha:
+            carac_unico_especial = carac in delimitadores or carac in operadores_logic or carac in operadores_relac or carac in operadores_aritm
+            if carac == "'" or carac == '"':
+                string_current = not string_current
+            if isEnd(carac) or (carac_unico_especial and not string_current):
+                # tentar classificar o buffer antes de limpar
+                if buffer:
+                    if buffer == "func":
+                        add(buffer, "FUNC")
+                    elif isClass(buffer):
+                        add(buffer, "CLASSE")
+                    elif isIdent(buffer):
+                        add(buffer, "IDENT")  
+                    elif isFloat(buffer):
+                        add(buffer, "REAL")
+                    elif isString(buffer):
+                        add(buffer, "STRING")
+                    elif isFunc(buffer):
+                        add(buffer, "FUNC")
+                    else:
+                        add(buffer, "ERRO")
 
-    for i, carac in enumerate(codigo):
-        carac_unico_especial = carac in delimitadores or carac in operadores_logic or carac in operadores_relac or carac in operadores_aritm
-        
-        # Controle de strings: alterna ao encontrar ' ou "
-        if carac in ["'", '"']:
-            if not string_current:
-                string_current = True
-                string_delim = carac
-                buffer += carac
-                continue
-            elif string_current and carac == string_delim:
-                buffer += carac
-                string_current = False
-                continue
+                    # sempre ira limpar
+                    string_current = False
+                    buffer = ""
 
-        # Controle de comentários
-        if carac == '$':
-            if not comentario_current:
-                comentario_current = True
-                buffer = '$'
-                continue
-            else:
-                buffer += '$'
-                comentario_current = False
-                if isComentario(buffer):
-                    add(buffer, "COMENTARIO")
-                else:
-                    print(f"Erro léxico: comentário malformado -> {buffer}")
-                    add(buffer, "ERRO")
-                buffer = ""
-                continue
-
-        if comentario_current:
-            buffer += carac
-            continue
-
-        if isEnd(carac) or (carac_unico_especial and not string_current):
-            # tentar classificar o buffer antes de limpar
-            if buffer:
-                if isPalavraReservada(buffer):
-                    add(buffer, palavras_reservadas[buffer])
-                elif isFunc(buffer):
-                    add(buffer, "FUNC")
-                elif isClass(buffer):
-                    add(buffer, "CLASSE")
-                elif isIdent(buffer):
-                    add(buffer, "IDENT")  
-                elif isFloat(buffer):
-                    add(buffer, "REAL_VAL")
-                elif isInt(buffer):
-                    add(buffer, "INT_VAL")
-                elif isString(buffer):
-                    add(buffer, "STRING_VAL")
-                else:
-                    add(buffer, "ERRO")
-
+                # sempre ira limpar
                 buffer = ""
 
             # tratando quando é só um caractere
@@ -180,29 +144,13 @@ def main():
 
     # se restar algo
     if buffer:
-        if isPalavraReservada(buffer):
-            add(buffer, palavras_reservadas[buffer])
-        elif isFunc(buffer):
-            add(buffer, "FUNC")
-        elif isClass(buffer):
+        if isClass(buffer):
             add(buffer, "CLASSE")
         elif isIdent(buffer):
-            add(buffer, "IDENT")
-        elif isFloat(buffer):
-            add(buffer, "REAL_VAL")
-        elif isInt(buffer):
-            add(buffer, "INT_VAL")
-        elif isComentario(buffer):
-            add(buffer, "COMENTARIO")
-        elif isString(buffer):
-            add(buffer, "STRING_VAL")
+            add(buffer, "IDENT")  # token padrão 
         else:
             add(buffer, "ERRO")
 
-    if comentario_current:
-        print("Erro léxico: comentário não fechado (faltando $ no final).")
-        add(buffer, "ERRO")
-
     display()
 
-main()
+main("exemplo.txt")
