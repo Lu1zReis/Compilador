@@ -189,7 +189,6 @@ def main():
         else:
             add(buffer, "ERRO")
 
-
     if comentario_current:
         print("Erro léxico: comentário não fechado (faltando $ no final).")
         add(buffer, "ERRO")
