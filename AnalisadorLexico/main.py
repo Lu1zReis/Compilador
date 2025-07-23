@@ -123,6 +123,20 @@ def display():
     for token, lexema in resultado:
         print(f"<{token}, {lexema}>")
 
+def processaComentario(carac, buffer, comentario_current):
+    if comentario_current:
+        if carac == '$' or carac == '\n':
+            add(buffer.strip(), "COMENTARIO")
+            return "", False  # encerrou o comentário
+        else:
+            return buffer + carac, True  # continua acumulando
+    elif carac == '$':
+        return "", True  # começou o comentário
+    else:
+        return buffer, comentario_current  # segue normal
+
+
+
 #############################################
 
 def main(nome_arquivo):
@@ -130,26 +144,18 @@ def main(nome_arquivo):
     buffer = ""
     comentario_current = False 
     string_current = False
-
+    
+    
     for linha in codigo:
         for carac in linha:
             carac_unico_especial = carac in delimitadores or carac in operadores_logic or carac in operadores_relac or carac in operadores_aritm
 
-            if carac == '$':
-                if not comentario_current:
-                    comentario_current = True
-                    buffer = '$'
-                    continue
-                else:
-                    buffer += '$'
-                    comentario_current = False
-                    if isComentario(buffer):
-                        add(buffer, "COMENTARIO")
-                    else:
-                        print(f"Erro léxico: comentário malformado -> {buffer}")
-                        add(buffer, "ERRO")
-                    buffer = ""
-                    continue
+            if not string_current:
+                novo_buffer, comentario_current,= processaComentario(carac, buffer, comentario_current,)
+                if comentario_current or buffer != novo_buffer:
+                     buffer = novo_buffer
+                     continue
+
 
             if carac == "'" or carac == '"':
                 string_current = not string_current
@@ -200,8 +206,8 @@ def main(nome_arquivo):
         else:
             add(buffer, "ERRO")
     if comentario_current:
-        print("Erro léxico: comentário não fechado (faltando $ no final).")
-        add(buffer, "ERRO")
+        add(buffer, "COMENTARIO")
+
         
     display()
 

@@ -1,6 +1,11 @@
 /Classe() {
-    "teste'
-    "teste'dentro'"
-    'teste'
-    'teste'"teste"
+    func soma(int x) {
+    func soma() {
+  $comentário em uma linha$
+  $comentário que termina com enter
+  $aklaklakalkalkaladk 
+  $
+  retorno 10;
+}
+}
 }
