@@ -13,7 +13,7 @@ operadores_logic = ["&", "|", "!"]
 operadores_aritm = ["+", "-", "*", "/", "%"]
 operadores_relac = ["=", ">", "<"]
 
-#dicionario para as palavras reservadas
+# dicionario para as palavras reservadas
 palavras_reservadas = {
     "func": "FUNC",
     "int": "INT",
@@ -37,43 +37,32 @@ resultado = []
 
 # regras de cada token
 def isString(buffer):
-    possibilidade1 = buffer.count('"') % 2 == 0 and buffer[0] == '"' and buffer[len(buffer)-1] == '"' 
-    possibilidade2 = buffer.count("'") % 2 == 0 and buffer[0] == "'" and buffer[len(buffer)-1] == "'" 
+    # String deve começar e terminar com aspas simples ou duplas
+    return (buffer.startswith('"') and buffer.endswith('"')) or (buffer.startswith("'") and buffer.endswith("'"))
 
-    if possibilidade1:
-        if buffer[1:].index('"')+1 < len(buffer)-1:
-            possibilidade1 = False
-    if possibilidade2:
-        if buffer[1:].index("'")+1 < len(buffer)-1:
-            possibilidade2 = False
-
-    return possibilidade1 or possibilidade2 
+def isFunc(buffer):
+    if not (buffer.startswith('#') and buffer.endswith('()')):
+        return False
+    nome = buffer[1:-2]
+    return 1 <= len(nome) <= 24 and all(c.isalnum())
 
 def isIdent(buffer):
-    if ((buffer[0].isalpha() and buffer[0] == buffer[0].lower()) or buffer[0] == '@') and len(buffer) <= 12:
-        for carac in buffer[1:]:
-            if carac.isalpha() or carac.isdigit() or carac == '_':
-                pass
-            else:
-                return False    
-        return True
+    if buffer[0].isalpha() and buffer[0] == buffer[0].lower() and len(buffer) <= 12:
+        return all(c.isalpha() or c.isdigit() or c == '_' for c in buffer[1:])
+    return False
 
 def isClass(buffer):
     size = len(buffer)
     return size > 1 and size <= 24 and buffer[0] == buffer[0].upper() and buffer[0].isalpha()
 
 def isFloat(buffer):
-    # "10.2"
-    tevePontuacao = False
-    for digit in buffer:
-        if not digit.isdigit() and digit != '.':
-            return False
-        elif digit == '.':
-            tevePontuacao = True
-    
-    if tevePontuacao:
-        return True
+    if buffer.count('.') == 1:
+        parte1, parte2 = buffer.split('.')
+        return parte1.isdigit() and parte2.isdigit()
     return False
+
+def isInt(buffer):
+    return buffer.isdigit()
 
 def isDelim(buffer):
     return buffer in delimitadores
@@ -93,7 +82,6 @@ def isComentario(buffer):
 def isPalavraReservada(buffer):
     return buffer in palavras_reservadas
 
-
 #############################################
 
 # funcoes auxiliares
@@ -111,17 +99,30 @@ def display():
 #############################################
 
 def main():
-    codigo = " func /Classe_01() $ comentário aqui $ certin {1.0 + 10.2 - para 'tes''te,;'}"
+    
+
     buffer = ""
 
     string_current = False
+    string_delim = ""  # Qual delimitador abriu a string (' ou ")
     comentario_current = False 
 
     for i, carac in enumerate(codigo):
         carac_unico_especial = carac in delimitadores or carac in operadores_logic or carac in operadores_relac or carac in operadores_aritm
-        if carac == "'":
-            string_current = not string_current
+        
+        # Controle de strings: alterna ao encontrar ' ou "
+        if carac in ["'", '"']:
+            if not string_current:
+                string_current = True
+                string_delim = carac
+                buffer += carac
+                continue
+            elif string_current and carac == string_delim:
+                buffer += carac
+                string_current = False
+                continue
 
+        # Controle de comentários
         if carac == '$':
             if not comentario_current:
                 comentario_current = True
@@ -143,24 +144,25 @@ def main():
             continue
 
         if isEnd(carac) or (carac_unico_especial and not string_current):
-            print(buffer)
             # tentar classificar o buffer antes de limpar
             if buffer:
                 if isPalavraReservada(buffer):
-                     add(buffer, palavras_reservadas[buffer])
+                    add(buffer, palavras_reservadas[buffer])
+                elif isFunc(buffer):
+                    add(buffer, "FUNC")
                 elif isClass(buffer):
                     add(buffer, "CLASSE")
                 elif isIdent(buffer):
                     add(buffer, "IDENT")  
                 elif isFloat(buffer):
-                    add(buffer, "REAL")
+                    add(buffer, "REAL_VAL")
+                elif isInt(buffer):
+                    add(buffer, "INT_VAL")
                 elif isString(buffer):
-                    add(buffer, "STRING")
+                    add(buffer, "STRING_VAL")
                 else:
                     add(buffer, "ERRO")
 
-                # sempre ira limpar
-                string_current = False
                 buffer = ""
 
             # tratando quando é só um caractere
@@ -179,16 +181,23 @@ def main():
     # se restar algo
     if buffer:
         if isPalavraReservada(buffer):
-             add(buffer, palavras_reservadas[buffer])
+            add(buffer, palavras_reservadas[buffer])
+        elif isFunc(buffer):
+            add(buffer, "FUNC")
         elif isClass(buffer):
             add(buffer, "CLASSE")
         elif isIdent(buffer):
-            add(buffer, "IDENT")  # token padrão 
+            add(buffer, "IDENT")
+        elif isFloat(buffer):
+            add(buffer, "REAL_VAL")
+        elif isInt(buffer):
+            add(buffer, "INT_VAL")
         elif isComentario(buffer):
             add(buffer, "COMENTARIO")
+        elif isString(buffer):
+            add(buffer, "STRING_VAL")
         else:
             add(buffer, "ERRO")
-
 
     if comentario_current:
         print("Erro léxico: comentário não fechado (faltando $ no final).")
