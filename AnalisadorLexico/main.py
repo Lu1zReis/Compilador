@@ -68,9 +68,6 @@ def isOpRelac(buffer):
 def isOpAritm(buffer):
     return buffer in operadores_aritm
 
-def isComentario(buffer):
-    return buffer.startswith('$') and buffer.endswith('$') and len(buffer) >= 2
-
 #############################################
 
 # funcoes auxiliares
