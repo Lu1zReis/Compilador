@@ -104,6 +104,8 @@ def main(nome_arquivo):
                         add(buffer, "IDENT")  
                     elif isFloat(buffer):
                         add(buffer, "REAL")
+                    elif isInt(buffer):
+                        add(buffer, "INT")
                     elif isString(buffer):
                         add(buffer, "STRING")
                     elif isFunc(buffer):

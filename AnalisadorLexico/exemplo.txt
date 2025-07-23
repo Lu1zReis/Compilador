@@ -1,1 +1,3 @@
-#Funcioo_123()
+/Classe() {
+    int var = ["teste", variavel2, 10.2, 10];
+}
