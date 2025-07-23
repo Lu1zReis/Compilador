@@ -1,12 +1,12 @@
 # definicoes
 TOKENS = [
-    "FUNC", "INT", "REAL", "STRING", "LISTA", "SE", "PODESER", 
+    "FUNC", "INT", "REAL", "STRING", "SE", "PODESER", 
     "SENAO", "PARA", "ENQUANTO", "RETORNO", "JUROU", "CERTIN", "CONST",
     "OP_LOGICO", "OP_NUMERICO", "OP_RELACIONAL",
-    "IDENT", "DEL", "STRING_VAL", "LISTA_VAL", "INT_VAL", "REAL_VAL", "CLASSE"
+    "IDENT", "DEL", "STRING_VAL", "COLECAO_VAL", "INT_VAL", "REAL_VAL", "CLASSE", "COMENTARIO"
 ]
 
-# palavras-chave
+# Já feitos: STRING_VAL, REAL_VAL, DEL, CLASSE, IDENT, OP_LOGICO, OP_NUMERICO, OP_RELACIONAL
 
 delimitadores = [",", ";", "(", ")", "{", "}", '[', ']']
 operadores_logic = ["&", "|", "!"]
@@ -17,6 +17,19 @@ operadores_relac = ["=", ">", "<"]
 resultado = []
 
 # regras de cada token
+def isString(buffer):
+    possibilidade1 = buffer.count('"') % 2 == 0 and buffer[0] == '"' and buffer[len(buffer)-1] == '"' 
+    possibilidade2 = buffer.count("'") % 2 == 0 and buffer[0] == "'" and buffer[len(buffer)-1] == "'" 
+
+    if possibilidade1:
+        if buffer[1:].index('"')+1 < len(buffer)-1:
+            possibilidade1 = False
+    if possibilidade2:
+        if buffer[1:].index("'")+1 < len(buffer)-1:
+            possibilidade2 = False
+
+    return possibilidade1 or possibilidade2 
+
 def isIdent(buffer):
     if ((buffer[0].isalpha() and buffer[0] == buffer[0].lower()) or buffer[0] == '@') and len(buffer) <= 12:
         for carac in buffer[1:]:
@@ -43,12 +56,6 @@ def isFloat(buffer):
         return True
     return False
 
-def isInt(buffer): #L: adicionei a função de num inteiros
-    return buffer.isdigit()
-
-def isString(buffer):  #L: adicionei a função para reconhecer strings '>exemplo<'
-    return buffer.startswith('>') and buffer.endswith('<')
-
 def isDelim(buffer):
     return buffer in delimitadores
 
@@ -60,6 +67,9 @@ def isOpRelac(buffer):
 
 def isOpAritm(buffer):
     return buffer in operadores_aritm
+
+def isComentario(buffer):
+    return buffer.startswith('$') and buffer.endswith('$') and len(buffer) >= 2
 
 #############################################
 
@@ -107,21 +117,18 @@ def main(nome_arquivo):
                     string_current = False
                     buffer = ""
 
-                # sempre ira limpar
-                buffer = ""
-
-            # tratando quando é só um caractere
-            if isDelim(carac):
-                add(carac, "DEL")
-            elif isOpLogic(carac):
-                add(carac, "OP_LOGIC")
-            elif isOpRelac(carac):
-                add(carac, "OP_RELAC")
-            elif isOpAritm(carac):
-                add(carac, "OP_ARITM")
-                
-        else:
-            buffer += carac
+                # tratando quando é só um caractere
+                if isDelim(carac):
+                    add(carac, "DEL")
+                elif isOpLogic(carac):
+                    add(carac, "OP_LOGIC")
+                elif isOpRelac(carac):
+                    add(carac, "OP_RELAC")
+                elif isOpAritm(carac):
+                    add(carac, "OP_ARITM")
+                    
+            else:
+                buffer += carac
 
     # se restar algo
     if buffer:
@@ -134,10 +141,6 @@ def main(nome_arquivo):
         else:
             add(buffer, "ERRO")
 
-    if comentario_current:
-        print("Erro léxico: comentário não fechado (faltando $ no final).")
-        add(buffer, "ERRO")
-
     display()
 
-main()
+main("exemplo.txt")
