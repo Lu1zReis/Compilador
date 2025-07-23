@@ -3,7 +3,7 @@ TOKENS = [
     "FUNC", "INT", "REAL", "STRING", "SE", "PODESER", 
     "SENAO", "PARA", "ENQUANTO", "RETORNO", "JUROU", "CERTIN", "CONST",
     "OP_LOGICO", "OP_NUMERICO", "OP_RELACIONAL",
-    "IDENT", "DEL", "STRING_VAL", "COLECAO_VAL", "INT_VAL", "REAL_VAL", "CLASSE"
+    "IDENT", "DEL", "STRING_VAL", "COLECAO_VAL", "INT_VAL", "REAL_VAL", "CLASSE", "COMENTARIO"
 ]
 
 # Já feitos: STRING_VAL, REAL_VAL, DEL, CLASSE, IDENT, OP_LOGICO, OP_NUMERICO, OP_RELACIONAL
@@ -12,6 +12,25 @@ delimitadores = [",", ";", "(", ")", "{", "}", '[', ']']
 operadores_logic = ["&", "|", "!"]
 operadores_aritm = ["+", "-", "*", "/", "%"]
 operadores_relac = ["=", ">", "<"]
+
+#dicionario para as palavras reservadas
+palavras_reservadas = {
+    "func": "FUNC",
+    "int": "INT",
+    "real": "REAL",
+    "string": "STRING",
+    "lista": "LISTA",
+    "matriz": "MATRIZ",
+    "se": "SE",
+    "podeser": "PODESER",
+    "senao": "SENAO",
+    "para": "PARA",
+    "enquanto": "ENQUANTO",
+    "retorno": "RETORNO",
+    "jurou": "JUROU",
+    "certin": "CERTIN",
+    "const": "CONST"
+}
 
 # variavel global
 resultado = []
@@ -67,6 +86,13 @@ def isOpRelac(buffer):
 
 def isOpAritm(buffer):
     return buffer in operadores_aritm
+
+def isComentario(buffer):
+    return buffer.startswith('$') and buffer.endswith('$') and len(buffer) >= 2
+
+def isPalavraReservada(buffer):
+    return buffer in palavras_reservadas
+
 
 #############################################
 
@@ -129,12 +155,21 @@ def main(nome_arquivo):
 
     # se restar algo
     if buffer:
-        if isClass(buffer):
+        if isPalavraReservada(buffer):
+             add(buffer, palavras_reservadas[buffer])
+        elif isClass(buffer):
             add(buffer, "CLASSE")
         elif isIdent(buffer):
             add(buffer, "IDENT")  # token padrão 
+        elif isComentario(buffer):
+            add(buffer, "COMENTARIO")
         else:
             add(buffer, "ERRO")
+
+
+    if comentario_current:
+        print("Erro léxico: comentário não fechado (faltando $ no final).")
+        add(buffer, "ERRO")
 
     display()
 
