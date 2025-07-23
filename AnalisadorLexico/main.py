@@ -8,24 +8,7 @@ TOKENS = [
 
 # palavras-chave
 
-keywords = {
-    "func": "FUNC",
-    "int": "INT",
-    "real": "REAL",
-    "string": "STRING",
-    "lista": "LISTA",
-    "se": "SE",
-    "podeser": "PODESER",
-    "senão": "SENAO",
-    "para": "PARA",
-    "enquanto": "ENQUANTO",
-    "retorno": "RETORNO",
-    "jurou": "JUROU",
-    "certin": "CERTIN",
-    "const": "CONST"
-}
-
-delimitadores = [",", ";", "(", ")", "{", "}"]
+delimitadores = [",", ";", "(", ")", "{", "}", '[', ']']
 operadores_logic = ["&", "|", "!"]
 operadores_aritm = ["+", "-", "*", "/", "%"]
 operadores_relac = ["=", ">", "<"]
@@ -94,25 +77,35 @@ def display():
 
 #############################################
 
-def main():
-    codigo = "/Classe_01() {1.0 + 10.2;}"
+def main(nome_arquivo):
+    codigo = open(nome_arquivo, "r")
     buffer = ""
 
-    for i, carac in enumerate(codigo):
-        carac_unico_especial = carac in delimitadores or carac in operadores_logic or carac in operadores_relac or carac in operadores_aritm
-        if isEnd(carac) or carac_unico_especial:
-            # tentar classificar o buffer antes de limpar
-            if buffer:
-                if buffer == "func":
-                    add(buffer, "FUNC")
-                elif isClass(buffer):
-                    add(buffer, "CLASSE")
-                elif isIdent(buffer):
-                    add(buffer, "IDENT")  
-                elif isFloat(buffer):
-                    add(buffer, "REAL")
-                else:
-                    add(buffer, "ERRO") #L: Troquei "Erro" para buffer
+    string_current = False
+    for linha in codigo:
+        for carac in linha:
+            carac_unico_especial = carac in delimitadores or carac in operadores_logic or carac in operadores_relac or carac in operadores_aritm
+            if carac == "'" or carac == '"':
+                string_current = not string_current
+            if isEnd(carac) or (carac_unico_especial and not string_current):
+                # tentar classificar o buffer antes de limpar
+                if buffer:
+                    if buffer == "func":
+                        add(buffer, "FUNC")
+                    elif isClass(buffer):
+                        add(buffer, "CLASSE")
+                    elif isIdent(buffer):
+                        add(buffer, "IDENT")  
+                    elif isFloat(buffer):
+                        add(buffer, "REAL")
+                    elif isString(buffer):
+                        add(buffer, "STRING")
+                    else:
+                        add(buffer, "ERRO")
+
+                    # sempre ira limpar
+                    string_current = False
+                    buffer = ""
 
                 # sempre ira limpar
                 buffer = ""
@@ -136,6 +129,10 @@ def main():
             add(buffer, "CLASSE")
         elif isIdent(buffer):
             add(buffer, "IDENT")  # token padrão 
+        elif isComentario(buffer):
+            add(buffer, "COMENTARIO")
+        else:
+            add(buffer, "ERRO")
 
     display()
 
