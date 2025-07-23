@@ -75,6 +75,22 @@ def isFloat(buffer):
         return True
     return False
 
+def isInt(buffer): #L: adicionei a função de num inteiros
+    return buffer.isdigit()
+
+def isString(buffer):
+    possibilidade1 = buffer.count('"') % 2 == 0 and buffer[0] == '"' and buffer[len(buffer)-1] == '"' 
+    possibilidade2 = buffer.count("'") % 2 == 0 and buffer[0] == "'" and buffer[len(buffer)-1] == "'" 
+
+    if possibilidade1:
+        if buffer[1:].index('"')+1 < len(buffer)-1:
+            possibilidade1 = False
+    if possibilidade2:
+        if buffer[1:].index("'")+1 < len(buffer)-1:
+            possibilidade2 = False
+
+    return possibilidade1 or possibilidade2 
+
 def isDelim(buffer):
     return buffer in delimitadores
 
@@ -142,11 +158,7 @@ def main(nome_arquivo):
             if isEnd(carac) or (carac_unico_especial and not string_current):
                 # tentar classificar o buffer antes de limpar
                 if buffer:
-                    if buffer == "func":
-                        add(buffer, "FUNC")
-                    elif isPalavraReservada(buffer):
-                     add(buffer, palavras_reservadas[buffer])
-                    elif isClass(buffer):
+                    if isClass(buffer):
                         add(buffer, "CLASSE")
                     elif isIdent(buffer):
                         add(buffer, "IDENT")  
@@ -161,6 +173,9 @@ def main(nome_arquivo):
                     string_current = False
                     buffer = ""
 
+                # sempre ira limpar
+                buffer = ""
+
                 # tratando quando é só um caractere
                 if isDelim(carac):
                     add(carac, "DEL")
@@ -170,7 +185,7 @@ def main(nome_arquivo):
                     add(carac, "OP_RELAC")
                 elif isOpAritm(carac):
                     add(carac, "OP_ARITM")
-                    
+                
             else:
                 buffer += carac
 
@@ -182,8 +197,6 @@ def main(nome_arquivo):
             add(buffer, "CLASSE")
         elif isIdent(buffer):
             add(buffer, "IDENT")  # token padrão 
-        elif isComentario(buffer):
-            add(buffer, "COMENTARIO")
         else:
             add(buffer, "ERRO")
     if comentario_current:
@@ -192,4 +205,4 @@ def main(nome_arquivo):
         
     display()
 
-main("exemplo.txt")
+main("AnalisadorLexico/exemplo.txt")
