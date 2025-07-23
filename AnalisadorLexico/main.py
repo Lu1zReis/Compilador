@@ -101,7 +101,7 @@ def isOpAritm(buffer):
     return buffer in operadores_aritm
 
 def isComentario(buffer):
-    return buffer.startswith('$') and buffer.endswith('$') and len(buffer) >= 2
+    return buffer.startswith('$') 
 
 def isPalavraReservada(buffer):
     return buffer in palavras_reservadas
@@ -146,8 +146,11 @@ def verifyToken(buffer):
         add(buffer, "STRING")
     elif isFunc(buffer):
         add(buffer, "FUNC")
+    elif isComentario(buffer):
+        add(buffer, "COMENTARIO")
     else:
         add(buffer, "ERRO")
+    
 
 def verifyCarac(caract):
     if isDelim(caract):
@@ -172,19 +175,16 @@ def main(nome_arquivo):
         for carac in linha:
             carac_unico_especial = carac in delimitadores or carac in operadores_logic or carac in operadores_relac or carac in operadores_aritm
 
-            if not string_current:
-                novo_buffer, comentario_current,= processaComentario(carac, buffer, comentario_current,)
-                if comentario_current or buffer != novo_buffer:
-                     buffer = novo_buffer
-                     continue
-
-
-            if carac == "'" or carac == '"':
+            
+            if carac == '$' or (comentario_current and carac == "\n"):
+                comentario_current = not comentario_current
+            if comentario_current == False and carac == "'" or carac == '"':
                 string_current = not string_current
 
                 
-            if isEnd(carac) or (carac_unico_especial and not string_current):
+            if (isEnd(carac) and not comentario_current) or (carac_unico_especial and (not string_current)):
                 # tentar classificar o buffer antes de limpar
+                
                 if buffer:
                     verifyToken(buffer)
 
