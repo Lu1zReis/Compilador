@@ -13,6 +13,25 @@ operadores_logic = ["&", "|", "!"]
 operadores_aritm = ["+", "-", "*", "/", "%"]
 operadores_relac = ["=", ">", "<"]
 
+#dicionario para as palavras reservadas
+palavras_reservadas = {
+    "func": "FUNC",
+    "int": "INT",
+    "real": "REAL",
+    "string": "STRING",
+    "lista": "LISTA",
+    "matriz": "MATRIZ",
+    "se": "SE",
+    "podeser": "PODESER",
+    "senao": "SENAO",
+    "para": "PARA",
+    "enquanto": "ENQUANTO",
+    "retorno": "RETORNO",
+    "jurou": "JUROU",
+    "certin": "CERTIN",
+    "const": "CONST"
+}
+
 # variavel global
 resultado = []
 
@@ -71,6 +90,9 @@ def isOpAritm(buffer):
 def isComentario(buffer):
     return buffer.startswith('$') and buffer.endswith('$') and len(buffer) >= 2
 
+def isPalavraReservada(buffer):
+    return buffer in palavras_reservadas
+
 #############################################
 
 # funcoes auxiliares
@@ -90,18 +112,40 @@ def display():
 def main(nome_arquivo):
     codigo = open(nome_arquivo, "r")
     buffer = ""
-
+    comentario_current = False 
     string_current = False
+
     for linha in codigo:
         for carac in linha:
             carac_unico_especial = carac in delimitadores or carac in operadores_logic or carac in operadores_relac or carac in operadores_aritm
+
+            if carac == '$':
+                if not comentario_current:
+                    comentario_current = True
+                    buffer = '$'
+                    continue
+                else:
+                    buffer += '$'
+                    comentario_current = False
+                    if isComentario(buffer):
+                        add(buffer, "COMENTARIO")
+                    else:
+                        print(f"Erro léxico: comentário malformado -> {buffer}")
+                        add(buffer, "ERRO")
+                    buffer = ""
+                    continue
+
             if carac == "'" or carac == '"':
                 string_current = not string_current
+
+                
             if isEnd(carac) or (carac_unico_especial and not string_current):
                 # tentar classificar o buffer antes de limpar
                 if buffer:
                     if buffer == "func":
                         add(buffer, "FUNC")
+                    elif isPalavraReservada(buffer):
+                     add(buffer, palavras_reservadas[buffer])
                     elif isClass(buffer):
                         add(buffer, "CLASSE")
                     elif isIdent(buffer):
@@ -132,7 +176,9 @@ def main(nome_arquivo):
 
     # se restar algo
     if buffer:
-        if isClass(buffer):
+        if isPalavraReservada(buffer):
+            add(buffer, palavras_reservadas[buffer])
+        elif isClass(buffer):
             add(buffer, "CLASSE")
         elif isIdent(buffer):
             add(buffer, "IDENT")  # token padrão 
@@ -140,7 +186,10 @@ def main(nome_arquivo):
             add(buffer, "COMENTARIO")
         else:
             add(buffer, "ERRO")
-
+    if comentario_current:
+        print("Erro léxico: comentário não fechado (faltando $ no final).")
+        add(buffer, "ERRO")
+        
     display()
 
 main("exemplo.txt")
