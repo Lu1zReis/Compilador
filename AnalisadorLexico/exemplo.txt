@@ -1,3 +1,11 @@
 /Classe() {
-    int var = ["teste", variavel2, 10.2, 10];
+    func soma(int x) {
+    func soma() {
+  $comentário em uma linha$
+  $comentário que termina com enter
+  $aklaklakalkalkaladk 
+   "teste" 2/ 3
+  retorno 10;
+}
+    }
 }
