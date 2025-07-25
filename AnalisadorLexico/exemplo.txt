@@ -1,7 +1,8 @@
 /Classe FuncaoTeste() {
   privado int a, b;
 
-  #pegarValor(int a, int b) {
+  $ podemos definir o tipo como na variavel 'a' ou utilizar o @ que permite a inferência de tipo implícita. 
+  #pegarValor(int a, @b) {
     este.a = a;
     este.b = b;
   }
