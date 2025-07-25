@@ -8,28 +8,36 @@ TOKENS = [
 
 # Já feitos: STRING_VAL, REAL_VAL, DEL, CLASSE, IDENT, OP_LOGICO, OP_NUMERICO, OP_RELACIONAL
 
-delimitadores = [",", ";", "(", ")", "{", "}", '[', ']']
+delimitadores = [",", ";", "(", ")", "{", "}", '[', ']', '.', '@']
 operadores_logic = ["&", "|", "!"]
 operadores_aritm = ["+", "-", "*", "/", "%"]
 operadores_relac = ["=", ">", "<"]
 
 #dicionario para as palavras reservadas
 palavras_reservadas = {
+    "const": "CONST",
     "func": "FUNC",
     "int": "INT",
     "real": "REAL",
     "string": "STRING",
-    "lista": "LISTA",
-    "matriz": "MATRIZ",
+    "Colecao": "COLECAO",
+    "escreva": "ESCREVA",
+    "ler": "LEITURA",
     "se": "SE",
     "podeser": "PODESER",
     "senao": "SENAO",
     "para": "PARA",
+    "em": "EM",
+    "de": "DE",
+    "ate": "ATE",
     "enquanto": "ENQUANTO",
     "retorno": "RETORNO",
     "jurou": "JUROU",
     "certin": "CERTIN",
-    "const": "CONST"
+    "const": "CONST",
+    "este": "ESTE",
+    "publico": "MODIFICADOR",
+    "privado": "MODIFICADOR"
 }
 
 # variavel global
@@ -64,7 +72,7 @@ def isIdent(buffer):
 
 def isClass(buffer):
     size = len(buffer)
-    return size > 1 and size <= 24 and buffer[0] == buffer[0].upper() and buffer[0].isalpha()
+    return size > 1 and size <= 24 and buffer[0].isalpha()
 
 def isFloat(buffer):
     if buffer.count('.') == 1:
@@ -132,12 +140,13 @@ def processaComentario(carac, buffer, comentario_current):
     else:
         return buffer, comentario_current  # segue normal
 
-
 def verifyToken(buffer):
-    if isClass(buffer):
-        add(buffer, "CLASSE")
+    if isPalavraReservada(buffer):
+        add(buffer, palavras_reservadas[buffer])
     elif isIdent(buffer):
         add(buffer, "IDENT")  
+    elif isClass(buffer):
+        add(buffer, "CLASSE")
     elif isFloat(buffer):
         add(buffer, "REAL")
     elif isInt(buffer):
@@ -182,7 +191,7 @@ def main(nome_arquivo):
                 string_current = not string_current
 
                 
-            if (isEnd(carac) and not comentario_current) or (carac_unico_especial and (not string_current)):
+            if (isEnd(carac) and not comentario_current) or (carac_unico_especial and (not string_current) and not comentario_current):
                 # tentar classificar o buffer antes de limpar
                 
                 if buffer:

@@ -1,11 +1,59 @@
-/Classe() {
-    func soma(int x) {
-    func soma() {
-  $comentário em uma linha$
-  $comentário que termina com enter
-  $aklaklakalkalkaladk 
-   "teste" 2/ 3
-  retorno 10;
+/Classe FuncaoTeste() {
+  privado int a, b;
+
+  #pegarValor(int a, int b) {
+    este.a = a;
+    este.b = b;
+  }
+  publico #soma() {
+    retorno a + b;
+  }
+  #mostrarSoma() {
+    retorno a + b;
+  }
+
 }
+
+@instancia = ClasseTeste(); $ ao criar uma variavel que recebe uma classe, essa variavel não tem um tipo, somente o '@'
+instancia.pegarValor(2, 2); $ assim que funciona um comentario depois
+$ assim que funciona um comentario antes $ instancia.soma(); 
+instancia.mostrarSoma();
+
+/Classe ListaTeste() {
+  privado Colecao lista;
+
+  publico #adicionandoLista(int val) {
+    $ duas formas de adicionar em uma lista com atributos privados
+    este.lista.adicionar(var); $ ou lista.adicionar(var); 
+  }
+
+  publico #removendoLista() {
+    este.lista.removeUltimo(); $ removendo ultimo 
+  }
+
+  publico #removendoIndex(int posicao) {
+    este.lista.removePosicao(posicao); $ removendo passando a posicao 
+  }
+
+  publico #inserir(int novoValor, posicao) {
+    este.lista.inserir(novoValor, posicao);  
+  }
+
+  publico #escrevendoCada() {
+    para valor em lista {
+      escreva(valor);
     }
+  }
+
+  publico #escrevendoTradicional() {
+    $ nesse exemplo é interpretado que a variavel i já deve ser um inteiro, e ela vai de inicio (0, um valor inteiro), até o tamanho da lista
+    para i de 0 ate este.lista.tamanho() {
+      escreva(este.lista[i]);
+    }
+  }
 }
+
+int val1 = int(ler()); $ caso não haja conversão para int ou real, o valor por padrão irá vir como string 
+int val2 = int(ler()); $ podemos passar o valor por aspas para determinar a mensagem, como: ler("msg");
+const string val3 = "valor fixo";
+
