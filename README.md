@@ -58,6 +58,8 @@ Ele gera tokens no formato (exemplo):
 
 ---
 ## **Demonstrando alguns exemplos**
+### Além dos exemplos contidos neste `README.md`, há outros arquivos de exemplo na pasta `AnalisadorLexico/exemplos`
+
 ### **Coleções**
 - - Uma coleção é um tipo de lista/matriz heterogênea.
   - Definindo:
