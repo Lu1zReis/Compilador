@@ -57,6 +57,53 @@ Ele gera tokens no formato (exemplo):
 | Delimitador | , ; ( ) { } \[ ] . @ # | DEL       |
 
 ---
+## **Demonstrando alguns exemplos**
+### **Coleções**
+- - Uma coleção é um tipo de lista/matriz heterogênea.
+  - Definindo:
+  - - ```
+        Colecao lista;
+      ```
+  - Atribuindo valor:
+  - - ```
+        lista = [1, "string", [2.10, 33]];
+        lista.adicionar(variavel); $ adiciona no fim da coleção
+        lista.inserir("teste", "string"); $ este método procura o valor passado pelo segundo parâmetro e substitui pelo primeiro parâmetro
+        lista[0] = 2; $ sobrescrevendo valor
+      ```
+  - Removendo valor:
+  - - ```
+      lista.removePosicao(2); $ remove o elemento da posição 2
+      lista.removeUltimo(); $ remove último elemento
+      ```
+  - Tamanho de uma lista:
+  - - ```
+      lista.tamanho(); $ retorna o tamanho da lista
+      ```
+### **Laços**
+- **Para**
+- - Uma das estruturas de repetição que podemos utilizar é o '**para**'. Ele pode tanto percorrer por posição.
+   ```
+      para i de 0 até lista.tamanho() {
+        escreva(i);
+      }  
+    ```
+- - ou interar sobre uma lista.
+   ```
+      para item em lista {
+        escreva(item);
+      }  
+    ```
+- **Enquanto**
+- - Outra estrutura de repetição que podemos utilizar é o '**enquanto**'. 
+   ```
+      enquanto (lista.tamanho() != 0) {
+         escreva(lista[lista.tamanho()-1])
+         lista.removeUltimo();
+      }  
+    ```
+---
+
 ## **⚙ Como rodar**
 1. Clone ou baixe o projeto.
 2. Coloque seu código de teste no arquivo exemplo.txt.
