@@ -9,7 +9,7 @@
   publico #soma() {
     retorno a + b;
   }
-  #mostrarSoma() {
+  func mostrarSoma() {
     retorno a + b;
   }
 
@@ -20,7 +20,7 @@ instancia.pegarValor(2, 2); $ assim que funciona um comentario depois
 $ assim que funciona um comentario antes $ instancia.soma(); 
 instancia.mostrarSoma();
 
-/Classe ListaTeste() {
+/ListaTeste() {
   privado Colecao lista;
 
   publico #adicionandoLista(int val) {
@@ -36,8 +36,8 @@ instancia.mostrarSoma();
     este.lista.removePosicao(posicao); $ removendo passando a posicao 
   }
 
-  publico #inserir(int novoValor, posicao) {
-    este.lista.inserir(novoValor, posicao);  
+  publico #inserir(int novoValor, int valorBuscado) {
+    este.lista.inserir(novoValor, valorBuscado);  
   }
 
   publico #escrevendoCada() {

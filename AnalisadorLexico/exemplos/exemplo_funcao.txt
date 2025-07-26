@@ -1,0 +1,14 @@
+#somar(int a, int b) {
+  retorno a + b;
+}
+
+#ehMaior(int x, int y) {
+  se (x > y) {
+    retorno certin;
+  } senao {
+    retorno jurou;
+  }
+}
+
+escreva(somar(10, 5));
+escreva(ehMaior(10, 5));

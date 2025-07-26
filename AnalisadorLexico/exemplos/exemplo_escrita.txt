@@ -1,0 +1,6 @@
+int idade = int(ler());
+string nome = ler();
+
+escreva("Olá mundo!");
+escreva(nome);
+escreva("Idade:", idade);

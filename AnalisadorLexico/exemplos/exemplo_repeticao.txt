@@ -1,0 +1,13 @@
+para i de 0 ate 10 {
+  escreva(i);
+}
+
+int i = 0;
+enquanto (i < 5) faca {
+  escreva("Loop enquanto:", i);
+  i = i + 1;
+}
+
+para item em lista_compras {
+  escreva(item);
+}

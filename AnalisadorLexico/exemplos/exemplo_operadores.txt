@@ -1,0 +1,21 @@
+int a, b, c, d, e, f;
+
+$ operadores aritméticos
+total = a + b - c * d / e % f;
+
+$ operadores relacionais
+se (a == b) {
+  escreva("Iguais");
+}
+se (a > b) {
+  escreva("A é maior");
+}
+
+$ operadores lógicos
+se (a > 0 & b > 0) {
+  escreva("Ambos positivos");
+}
+
+se !(a == b) {
+  escreva("São diferentes");
+}

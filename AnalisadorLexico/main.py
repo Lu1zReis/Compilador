@@ -1,21 +1,13 @@
+from os import listdir
+
 # definicoes
-TOKENS = [
-    "FUNC", "INT", "REAL", "STRING", "SE", "PODESER", 
-    "SENAO", "PARA", "ENQUANTO", "RETORNO", "JUROU", "CERTIN", "CONST",
-    "OP_LOGICO", "OP_NUMERICO", "OP_RELACIONAL",
-    "IDENT", "DEL", "STRING_VAL", "COLECAO_VAL", "INT_VAL", "REAL_VAL", "CLASSE", "COMENTARIO"
-]
-
-# Já feitos: STRING_VAL, REAL_VAL, DEL, CLASSE, IDENT, OP_LOGICO, OP_NUMERICO, OP_RELACIONAL
-
-delimitadores = [",", ";", "(", ")", "{", "}", '[', ']', '.', '@']
+delimitadores = [",", ";", "(", ")", "{", "}", '[', ']', '.', '@', '#']
 operadores_logic = ["&", "|", "!"]
 operadores_aritm = ["+", "-", "*", "/", "%"]
 operadores_relac = ["=", ">", "<"]
 
 #dicionario para as palavras reservadas
 palavras_reservadas = {
-    "const": "CONST",
     "func": "FUNC",
     "int": "INT",
     "real": "REAL",
@@ -31,10 +23,12 @@ palavras_reservadas = {
     "de": "DE",
     "ate": "ATE",
     "enquanto": "ENQUANTO",
+    "faca": "FACA",
     "retorno": "RETORNO",
     "jurou": "JUROU",
     "certin": "CERTIN",
     "const": "CONST",
+    "Classe": "CLASSE",
     "este": "ESTE",
     "publico": "MODIFICADOR",
     "privado": "MODIFICADOR"
@@ -57,22 +51,10 @@ def isString(buffer):
 
     return possibilidade1 or possibilidade2 
 
-def isFunc(buffer):
-    if not (buffer.startswith('#')):
-        return False
-    nome = buffer[1:]
-    return (1 <= len(nome) <= 24 
-            and nome[0].isalpha() 
-            and all(c.isalnum() or c == '_' for c in nome[1:]))
-
 def isIdent(buffer):
-    if buffer[0].isalpha() and buffer[0] == buffer[0].lower() and len(buffer) <= 12:
+    if buffer[0].isalpha() and len(buffer) <= 12:
         return all(c.isalpha() or c.isdigit() or c == '_' for c in buffer[1:])
     return False
-
-def isClass(buffer):
-    size = len(buffer)
-    return size > 1 and size <= 24 and buffer[0].isalpha()
 
 def isFloat(buffer):
     if buffer.count('.') == 1:
@@ -145,22 +127,17 @@ def verifyToken(buffer):
         add(buffer, palavras_reservadas[buffer])
     elif isIdent(buffer):
         add(buffer, "IDENT")  
-    elif isClass(buffer):
-        add(buffer, "CLASSE")
     elif isFloat(buffer):
         add(buffer, "REAL")
     elif isInt(buffer):
         add(buffer, "INT")
     elif isString(buffer):
         add(buffer, "STRING")
-    elif isFunc(buffer):
-        add(buffer, "FUNC")
     elif isComentario(buffer):
         add(buffer, "COMENTARIO")
     else:
         add(buffer, "ERRO")
     
-
 def verifyCarac(caract):
     if isDelim(caract):
         add(caract, "DEL")
@@ -170,6 +147,16 @@ def verifyCarac(caract):
         add(caract, "OP_RELAC")
     elif isOpAritm(caract):
         add(caract, "OP_ARITM")
+
+def escolheArquivo():
+    exemplos = []
+    for i, arquivo in enumerate(listdir("AnalisadorLexico/exemplos")):
+        exemplos.append(arquivo)
+        print(f"{i} - {arquivo}")
+    escolha = int(input("Dejesa ver qual saída de exemplo? "))
+    
+    return exemplos[escolha]
+
 
 #############################################
 
@@ -217,4 +204,5 @@ def main(nome_arquivo):
         
     display()
 
-main("AnalisadorLexico/exemplo.txt")
+escolha = escolheArquivo()
+main(f"AnalisadorLexico/exemplos/{escolha}")

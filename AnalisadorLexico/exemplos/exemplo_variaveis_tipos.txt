@@ -1,0 +1,6 @@
+int idade = 25;
+real altura = 1.75;
+string nome = "Maria";
+const real PI = 3.14;
+
+@pontuacao = 100; $ inferência de tipo implícita com @

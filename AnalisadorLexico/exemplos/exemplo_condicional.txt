@@ -1,0 +1,16 @@
+int idade = int(ler());
+int pontuacao = int(ler());
+
+se (idade >= 18) {
+  escreva("Maior de idade");
+} senao {
+  escreva("Menor de idade");
+}
+
+se (pontuacao > 1000) {
+  escreva("Parabéns!");
+} podeser (pontuacao == 1000) {
+  escreva("Quase lá!");
+} senao {
+  escreva("Continue tentando!");
+}

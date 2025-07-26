@@ -1,0 +1,3 @@
+int idade = ler(); $ leitura simples
+string nome = ler("Digite seu nome:"); $ leitura com mensagem
+real salario = real(ler()); $ conversão para tipo real

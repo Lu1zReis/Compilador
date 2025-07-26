@@ -1,0 +1,6 @@
+Colecao lista_compras = ["arroz", "feijão", "óleo", 10.5];
+escreva(lista_compras[0]); $ escreve "arroz"
+lista_compras[0] = "macarrão"; $ troca valor
+
+Colecao nested = ["texto", [1, 2, 3], ["a", "b"]];
+escreva(nested[1][2]); $ escreve 
