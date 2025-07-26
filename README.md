@@ -26,34 +26,41 @@ Ele gera tokens no formato (exemplo):
 
 ---
 ## **Palavras Reservadas e Valores**
-| Exemplo                            | Token                              | Explicação                        |
-| ---------------------------------- | ---------------------------------- |---------------------------------- |
-| -                                  | FUNC                               | Inicio de função pode começar com '#' ou a palavra reservada 'func'   | 
-| -                                  | CLASSE                             | Inicio de classe pode começar com '/' ou a palavra reservada 'Classe' |
-| -                                  | IDENT                              | + [a-zA-Z0-9_], máx. 24 caracteres                                    |
-| int                                | INT                                | Palavra chave*                                                        |
-| real                               | REAL                               | Palavra chave*                                                        |
-| string                             | STRING                             | Palavra chave*                                                        |
-| Colecao                            | COLECAO                            | Palavra chave*                                                        |
-| const                              | CONST                              | Palavra chave*                                                        |
-| se, podeser, senao                 | SE, PODESER, SENAO                 | Palavra chave*                                                        |
-| para, em, de, ate                  | PARA, EM, DE, ATE                  | Palavra chave*                                                        |
-| enquanto, faca                     | ENQUANTO, FACA                     | Palavra chave*                                                        |
-| jurou, certin                      | JUROU, CERTIN                      | Palavra chave*                                                        |
-| este                               | ESTE                               | Palavra chave*                                                        |
-| publico, privado                   | MODIFICADOR                        | Palavra chave*                                                        |
-| ler                                | LER                                | Palavra chave*                                                        |
-| escreva                            | ESCREVA                            | Palavra chave*                                                        |
-| retorno                            | RETORNO                            | Palavra chave*                                                        |
+| Exemplo                            | Token                              | Explicação                                                                                    |
+| ---------------------------------- | ---------------------------------- |-----------------------------------------------------------------------------------------------|
+| -                                  | FUNC                               | Inicio de função pode começar com '#' ou a palavra reservada 'func' antes do identificador.   | 
+| -                                  | CLASSE                             | Inicio de classe pode começar com '/' ou a palavra reservada 'Classe' antes do identificador. |
+| -                                  | IDENT                              | + [a-zA-Z0-9_], máx. 12 caracteres.                                                           |
+| -                                  | COMENTARIO                         | Um comentário deve começar com '$' e terminar com uma quebra de linha '\n' ou um outro '$'.   |
+| int                                | INT                                | Define o tipo de um identificador.                                                            |
+| real                               | REAL                               | Define o tipo de um identificador.                                                            |
+| string                             | STRING                             | Define o tipo de um identificador.                                                            |
+| Colecao                            | COLECAO                            | Define o tipo de um identificador.                                                            |
+| const                              | CONST                              | Define que o identificador terá valor fixo.                                                   |
+| se, podeser, senao                 | SE, PODESER, SENAO                 | *                                                                                             |
+| para, em, de, ate                  | PARA, EM, DE, ATE                  | *                                                                                             |
+| enquanto, faca                     | ENQUANTO, FACA                     | *                                                                                             |
+| jurou, certin                      | JUROU, CERTIN                      | Resultados booleano para Falso (jurou) e Verdadeiro (certin).                                 |
+| este                               | ESTE                               | Indica que um atributo ou método pertence aquela classe.                                      |
+| publico, privado                   | MODIFICADOR                        | Muda a visibilidade de um membro de uma classe.                                               |
+| ler                                | LER                                | Entrada externa do teclado.                                                                   |
+| escreva                            | ESCREVA                            | Exibir o conteúdo no prompt do usuário.                                                       |
+| retorno                            | RETORNO                            | Retorna algum valor.                                                                             |
 
 ---
 ## **Operadores e Delimitadores**
-| Tipo        | Exemplos       | Token     | 
-| ----------- | -------------- | --------- | 
-| Aritméticos | +, -, \*, /, % | OP\_ARITM | 
-| Relacionais | =, >, <        | OP\_RELAC |       
-| Lógicos     | &, \|,  \!     | OP\_LOGIC |
-| Delimitador | , ; ( ) { } \[ ] . @ | DEL   |
+| Tipo        | Exemplos               | Token     | 
+| ----------- | ---------------------- | --------- | 
+| Aritméticos | +, -, \*, /, %         | OP\_ARITM | 
+| Relacionais | =, >, <                | OP\_RELAC |       
+| Lógicos     | &, \|,  \!             | OP\_LOGIC |
+| Delimitador | , ; ( ) { } \[ ] . @ # | DEL       |
 
 ---
-Explicando
+## **⚙ Como rodar**
+1. Clone ou baixe o projeto.
+2. Coloque seu código de teste no arquivo exemplo.txt.
+3. Vá até a pasta 'AnalisadorLexico' e Execute:
+```plaintext
+  python main.py
+```
