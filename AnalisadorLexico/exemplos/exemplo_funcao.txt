@@ -2,7 +2,7 @@
   retorno a + b;
 }
 
-#ehMaior(int x, int y) {
+func ehMaior(int x, int y) {
   se (x > y) {
     retorno certin;
   } senao {
