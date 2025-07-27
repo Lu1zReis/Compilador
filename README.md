@@ -58,7 +58,7 @@ Ele gera tokens no formato (exemplo):
 
 ---
 ## **Demonstrando alguns exemplos**
-### Além dos exemplos contidos neste `README.md`, há outros arquivos de exemplo na pasta `AnalisadorLexico/exemplos`
+### Além dos exemplos contidos abaixo neste `README.md`, há outros arquivos de exemplo na pasta `AnalisadorLexico/exemplos`
 
 ### **Coleções**
 - - Uma coleção é um tipo de lista/matriz heterogênea.
@@ -82,6 +82,51 @@ Ele gera tokens no formato (exemplo):
   - - ```
       lista.tamanho(); $ retorna o tamanho da lista
       ```
+### **Classes**
+- Para definir uma classe, podemos usar '/' ou a palavra reservada 'Classe':
+```
+/Classe Pessoa() {
+  privado string nome;
+  privado int idade;
+
+  publico #definirDados(string nome, int idade) {
+    este.nome = nome;
+    este.idade = idade;
+  }
+
+  publico #mostrarDados() {
+    escreva("Nome:", este.nome);
+    escreva("Idade:", este.idade);
+  }
+}
+```
+- Criando instância e usando métodos:
+```
+@pessoa = Pessoa();
+pessoa.definirDados("Lucas", 30);
+pessoa.mostrarDados();
+```
+### **Funções**
+- Uma função pode começar com '#' ou com a palavra reservada 'func':
+```
+#somar(int a, int b) {
+  retorno a + b;
+}
+
+func ehMaior(int x, int y) {
+  se x > y {
+    retorno certin;
+  } senao {
+    retorno jurou;
+  }
+}
+```
+- Chamando as funções:
+```
+escreva(somar(10, 5));
+escreva(ehMaior(10, 5));
+```
+
 ### **Laços**
 - **Para**
 - - Uma das estruturas de repetição que podemos utilizar é o '**para**'. Ele pode tanto percorrer por posição.
