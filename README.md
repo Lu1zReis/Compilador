@@ -1,9 +1,9 @@
 # Compilador
 Repositório para o projeto de Compiladores
 
-# 🧠 Analisador Léxico – PortuLang
+# 🧠 Analisador Léxico – Zlang
 
-Este projeto é um **analisador léxico** feito em Python para uma linguagem fictícia inspirada no **português**, combinando características de linguagens como **Python** e **C**.
+Este projeto é um **analisador léxico** feito em Python para uma linguagem fictícia inspirada no vocabulário da **geração Z**, em português, combinando características de linguagens como **Python** e **C**.
 
 Ele transforma um código fonte em uma sequência de **tokens**, que descrevem as partes significativas do programa: palavras reservadas, identificadores, operadores, literais etc.
 
