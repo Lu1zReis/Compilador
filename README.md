@@ -20,7 +20,8 @@ O analisador percorre o código fonte caractere por caractere, construindo "buff
 Ele gera tokens no formato (exemplo):
 ```plaintext
 <TOKEN, LEXEMA>
-<FUNC, #pegarValor>
+<DEL, #>
+<IDENT, pegarValor>
 <INT, int>
 <IDENT, a>
 <OP_ARITM, +>
