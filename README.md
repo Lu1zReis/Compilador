@@ -1,6 +1,8 @@
 # Compilador
 Repositório para o projeto de Compiladores
 
+#Desenvolvido por: Érica Marques, Luiz Eduardo e Letízia Manuella para a disciplina de Compiladores.
+
 # 🧠 Analisador Léxico – Zlang
 
 Este projeto é um **analisador léxico** feito em Python para uma linguagem fictícia inspirada no vocabulário da **geração Z**, em português, combinando características de linguagens como **Python** e **C**.
@@ -37,9 +39,9 @@ Ele gera tokens no formato (exemplo):
 | string                             | STRING                             | Define o tipo de um identificador.                                                            |
 | Colecao                            | COLECAO                            | Define o tipo de um identificador.                                                            |
 | const                              | CONST                              | Define que o identificador terá valor fixo.                                                   |
-| se, podeser, senao                 | SE, PODESER, SENAO                 | *                                                                                             |
-| para, em, de, ate                  | PARA, EM, DE, ATE                  | *                                                                                             |
-| enquanto, faca                     | ENQUANTO, FACA                     | *                                                                                             |
+| se, podeser, senao                 | SE, PODESER, SENAO                 | Estruturas condicionais: se (if), podeser (else if) e senao (else).                                                                                           |
+| para, em, de, ate                  | PARA, EM, DE, ATE                  | Estrutura de repetição para (for), podendo definir intervalos com de, ate e iterar sobre coleções com em.                                                                                             |
+| enquanto, faca                     | ENQUANTO, FACA                     | Estruturas de repetição: enquanto (while) e faca (do-while).                                                                                           |
 | jurou, certin                      | JUROU, CERTIN                      | Resultados booleano para Falso (jurou) e Verdadeiro (certin).                                 |
 | este                               | ESTE                               | Indica que um atributo ou método pertence aquela classe.                                      |
 | publico, privado                   | MODIFICADOR                        | Muda a visibilidade de um membro de uma classe.                                               |
@@ -135,7 +137,7 @@ escreva(ehMaior(10, 5));
         escreva(i);
       }  
     ```
-- - ou interar sobre uma lista.
+- - ou iterar sobre uma lista.
    ```
       para item em lista {
         escreva(item);
