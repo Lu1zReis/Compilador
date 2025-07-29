@@ -1,7 +1,7 @@
 # Compilador
 Repositório para o projeto de Compiladores
 
-$ Desenvolvido por: Érica Marques, Luiz Eduardo e Letízia Manuella para a disciplina de Compiladores. $
+$ Desenvolvido por: [Érica Marques](https://github.com/ericamarques2004), [Letízia Manuella](https://github.com/letiziacc) e [Luiz Eduardo](https://github.com/Lu1zReis) para a disciplina de Compiladores. $
 
 # 🧠 Analisador Léxico – Zlang
 
