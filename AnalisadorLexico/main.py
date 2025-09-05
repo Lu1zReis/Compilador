@@ -107,8 +107,18 @@ def add(lexema, token):
 
 def display():
     print("<TOKEN, LEXEMA>")
-    for token, lexema in resultado:
-        print(f"<{token}, {lexema}>")
+    
+    # Abre (ou cria) o arquivo de saída
+    with open("../AnalisadorSintatico/tokens_saida.txt", "w", encoding="utf-8") as f:
+        f.write("<TOKEN, LEXEMA>\n")
+        
+        for token, lexema in resultado:
+            linha = f"<{token}, {lexema}>\n"
+            print(linha.strip())  # imprime no console
+            f.write(linha)        # grava no arquivo
+
+        f.write("<EOF, $>\n")
+
 
 def processaComentario(carac, buffer, comentario_current):
     if comentario_current:
@@ -150,7 +160,7 @@ def verifyCarac(caract):
 
 def escolheArquivo():
     exemplos = []
-    for i, arquivo in enumerate(listdir("AnalisadorLexico/exemplos")):
+    for i, arquivo in enumerate(listdir("exemplos")):
         exemplos.append(arquivo)
         print(f"{i} - {arquivo}")
     escolha = int(input("Dejesa ver qual saída de exemplo? "))
@@ -205,4 +215,4 @@ def main(nome_arquivo):
     display()
 
 escolha = escolheArquivo()
-main(f"AnalisadorLexico/exemplos/{escolha}")
+main(f"exemplos/{escolha}")
