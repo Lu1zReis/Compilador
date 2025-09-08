@@ -1,11 +1,12 @@
+# --- Tabela LL(1) com precedência correta (+,-) < (*,/)
 parse_table = {
     "E": {
         "IDENT": ["T", "E'"],
         "(": ["T", "E'"]
     },
     "E'": {
-        "OP_ARITM": ["OP_ARITM", "T", "E'"],
-        "OP_ARITM": ["OP_ARITM", "T", "E'"],
+        "+": ["+", "T", "E'"],
+        "-": ["-", "T", "E'"],
         ")": ["ε"],
         "$": ["ε"]
     },
@@ -14,10 +15,10 @@ parse_table = {
         "(": ["F", "T'"]
     },
     "T'": {
-        "OP_ARITM": ["OP_ARITM", "F", "T'"],
-        "OP_ARITM": ["OP_ARITM", "F", "T'"],
-        "OP_ARITM": ["ε"],
-        "OP_ARITM": ["ε"],
+        "*": ["*", "F", "T'"],
+        "/": ["/", "F", "T'"],
+        "+": ["ε"],
+        "-": ["ε"],
         ")": ["ε"],
         "$": ["ε"]
     },
@@ -27,72 +28,109 @@ parse_table = {
     }
 }
 
+NONTERMINALS = {"E","E'","T","T'","F"}
+
 
 def carregar_tokens(caminho_arquivo):
+    """
+    Lê linhas no formato <TOKEN, LEXEMA> e normaliza para os símbolos
+    que a parse_table usa: IDENT, (, ), +, -, *, /, $
+    Ignora o cabeçalho <TOKEN, LEXEMA>.
+    """
     tokens = []
     with open(caminho_arquivo, "r", encoding="utf-8") as f:
         for linha in f:
             linha = linha.strip()
-            if linha.startswith("<") and "," in linha:
-                tipo = linha.split(",")[0].strip("<>").strip()
-                lexema = linha.split(",")[1].strip(" >")
+            if not linha or not (linha.startswith("<") and "," in linha):
+                continue
 
-                # ignorando o cabeçalho
-                if tipo == "TOKEN":  
-                    continue  
-                elif tipo == "EOF":
-                    # adicionando símbolo de fim de entrada
-                    tokens.append(("$", "$"))  
+            tipo, resto = linha.split(",", 1)
+            tipo = tipo.strip("<>").strip()
+            lexema = resto.strip(" >").strip()
+
+            # ignorando cabeçalho
+            if tipo == "TOKEN":
+                continue
+
+            # fim de entrada
+            if tipo == "EOF":
+                tokens.append(("$", "$"))
+                continue
+
+            # mapeando delimitadores para '(' e ')'
+            if tipo == "DEL":
+                if lexema in ("(", ")"):
+                    tokens.append((lexema, lexema))
                 else:
-                    tokens.append((tipo, lexema))
+                    continue
+                continue
+
+            # mapeia operadores aritméticos para + - * /
+            if tipo == "OP_ARITM":
+                if lexema in {"+", "-", "*", "/"}:
+                    tokens.append((lexema, lexema))
+                else:
+                    # operador fora do escopo desta gramática; ignore/erro
+                    continue
+                continue
+
+            # identificadores
+            if tipo == "IDENT":
+                tokens.append(("IDENT", lexema))
+                continue
+
+            # qualquer outra coisa é irrelevante para esta gramática
+            continue
+
     return tokens
 
 
 def parser_ll1(tokens, parse_table, start_symbol="E"):
     stack = ["$", start_symbol]
-    input_tokens = [tok for tok, lex in tokens]  # só pega os tipos
-    cursor = 0
+    input_tokens = [tok for tok, _ in tokens]  # só tipos
+    i = 0
 
     print("Tokens de entrada:", input_tokens)
 
-    while stack:
-        top = stack.pop()
-        current = input_tokens[cursor]
+    while True:
+        X = stack[-1]
+        a = input_tokens[i] if i < len(input_tokens) else None
 
-        if top == "ε":
-            continue
+        # log para depurar
+        # print(f"Pilha: {stack} | Entrada: {input_tokens[i:]}")
 
-        # terminal casa
-        elif top == current:  
-            print(f"Reconhecido: {current}")
-            cursor += 1
-
-        # não terminal
-        elif top in parse_table:
-            if current in parse_table[top]:
-                production = parse_table[top][current]
-                print(f"{top} -> {' '.join(production)}")
-                for symbol in reversed(production):
-                    stack.append(symbol)
-            else:
-                expected = list(parse_table[top].keys())
-                raise SyntaxError(
-                    f"Erro de sintaxe: para '{top}', esperado {expected}, mas encontrou '{current}'"
-                )
-
-        else:
-            raise SyntaxError(f"Erro: esperado {top}, encontrado {current}")
-
-        if top == "$" and current == "$":
+        # aceita
+        if X == "$" and a == "$":
             print("Análise concluída com sucesso!")
             return True
 
-    return False
+        # se topo é não-terminal: consulta tabela
+        if X in NONTERMINALS:
+            if a in parse_table[X]:
+                stack.pop()
+                prod = parse_table[X][a]
+                print(f"{X} -> {' '.join(prod)}")
+                if prod != ["ε"]:
+                    stack.extend(reversed(prod))
+            else:
+                expected = list(parse_table[X].keys())
+                raise SyntaxError(
+                    f"Erro de sintaxe: para '{X}', esperado {expected}, mas encontrou '{a}'"
+                )
+
+        else:
+            # se topo é terminal: precisa casar com a entrada
+            if X == a:
+                stack.pop()
+                i += 1
+                print(f"Consome '{a}'")
+            else:
+                raise SyntaxError(f"Erro: esperado '{X}', mas encontrou '{a}'")
 
 
 if __name__ == "__main__":
-    tokens = carregar_tokens("tokens_saida.txt")  # arquivo com os <TOKEN, LEXEMA>
-    if (parser_ll1(tokens, parse_table)):
-        print("A gramática pertence à linguagem.")
+    tokens = carregar_tokens("tokens_saida.txt")  
+    if parser_ll1(tokens, parse_table):
+        print("A cadeia pertence à linguagem.")
     else:
-        print("A gramática não pertence à linguagem.")
+        print("A cadeia NÃO pertence à linguagem.")
