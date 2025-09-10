@@ -2,5 +2,4 @@
 <IDENT, id>
 <OP_ARITM, *>
 <IDENT, id>
-<OP_ARITM, +>
 <EOF, $>

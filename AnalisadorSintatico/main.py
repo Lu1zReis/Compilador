@@ -95,7 +95,7 @@ def parser_ll1(tokens, parse_table, start_symbol="E"):
     while True:
         X = stack[-1]
         a = input_tokens[i] if i < len(input_tokens) else None
-
+        print(f"a=>{a}")
         # log para depurar
         # print(f"Pilha: {stack} | Entrada: {input_tokens[i:]}")
 
